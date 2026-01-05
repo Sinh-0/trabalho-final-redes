@@ -6,3 +6,26 @@ porta = 12345
 
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cliente.connect((IP_Servidor, porta)) 
+
+def receber_mensagens():
+    while True:
+        try:
+            mensagem = cliente.recv(1024).decode()
+            if mensagem:
+                print(f"\nAtualização do quadro de avisos: {mensagem}")
+                print("Digite sua mensagem: ", end="")
+            else:
+                break
+        except:
+            print("Erro na conexão.")
+            cliente.close()
+            break
+
+def enviar_mensagens():
+    while True:
+        try:
+            msg = input("Digite sua mensagem: ")
+            cliente.send(msg.encode())
+        except:
+            cliente.close()
+            break
