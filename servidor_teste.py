@@ -8,23 +8,28 @@ def gerencia_clientes(conexao, endereco):
     while True:
         try:
             dados = conexao.recv(1024)
-        except:
+            if not dados:
+               break
+            
+            for c in clientes:
+                if c != conexao:
+                    try:
+                        c.send(dados)
+                    except:
+                        if c in clientes:
+                            clientes.remove(c)
+            
+            print(f"Mensagem de {endereco}: {dados.decode()}")
+            
+        except Exception as e:
+            print(f"Erro com {endereco}: {e}")
             break
-        if not dados:
-            break
-
-    for c in clientes:
-        if c != conexao:
-            try:
-                c.send(dados)
-            except:
-                clientes.remove(c)
-    print(f"Mensagem de {endereco}: {dados.decode()}")  
 
     print(f"Conexão de {endereco} encerrada.")
-    clientes.remove(conexao)
+    if conexao in clientes:
+        clientes.remove(conexao)
     conexao.close()
-
+    
 
 
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -29,3 +29,9 @@ def enviar_mensagens():
         except:
             cliente.close()
             break
+  
+thread_receber = threading.Thread(target=receber_mensagens)
+thread_enviar = threading.Thread(target=enviar_mensagens)   
+
+thread_receber.start()
+thread_enviar.start() 
