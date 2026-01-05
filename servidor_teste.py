@@ -12,7 +12,6 @@ def gerencia_clientes(conexao, endereco):
             break
         if not dados:
             break
-        print(f"Mensagem de {endereco}: {dados.decode()}")
 
     for c in clientes:
         if c != conexao:
@@ -20,11 +19,11 @@ def gerencia_clientes(conexao, endereco):
                 c.send(dados)
             except:
                 clientes.remove(c)
-except:
-    break
-print(f"Conexão de {endereco} encerrada.")
-clientes.remove(conexao)
-conexao.close()
+    print(f"Mensagem de {endereco}: {dados.decode()}")  
+
+    print(f"Conexão de {endereco} encerrada.")
+    clientes.remove(conexao)
+    conexao.close()
 
 
 
@@ -33,7 +32,9 @@ servidor.bind(('localhost', 12345))
 servidor.listen(5)
 print("servidor aguardando conexões na porta 12345...")
 
-conexao, endereco = servidor.accept()
-dados = conexao.recv(1024)
-print("Mensagem recebida:", dados.decode())
-conexao.close()
+while True:
+    conexao, endereco = servidor.accept()
+    clientes.append(conexao)
+
+    nova_thread = threading.Thread(target=gerencia_clientes, args=(conexao, endereco))
+    nova_thread.start()
