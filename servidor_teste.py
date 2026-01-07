@@ -1,15 +1,26 @@
 import socket
 import threading 
 
-clientes= []
+clientes = []
 
 def gerencia_clientes(conexao, endereco):
-    print(f"Conexão de {endereco} estabelecida.")
-    while True:
-        try:
+    try:
+        nome_usuario = conexao.recv(1024).decode()
+        
+        boas_vindas = f"\n[SISTEMA]: {nome_usuario} entrou"
+        print(f"[Ativo]: {nome_usuario} ({endereco}) conectado.")
+        
+        for c in clientes:
+            if c != conexao:
+                try:
+                    c.send(boas_vindas.encode())
+                except:
+                    pass
+
+        while True:
             dados = conexao.recv(1024)
             if not dados:
-               break
+                break
             
             for c in clientes:
                 if c != conexao:
@@ -19,23 +30,21 @@ def gerencia_clientes(conexao, endereco):
                         if c in clientes:
                             clientes.remove(c)
             
-            print(f"Mensagem de {endereco}: {dados.decode()}")
+            print(f"[Ativo]: {dados.decode()}")
             
-        except Exception as e:
-            print(f"Erro com {endereco}: {e}")
-            break
-
-    print(f"Conexão de {endereco} encerrada.")
-    if conexao in clientes:
-        clientes.remove(conexao)
-    conexao.close()
-    
-
+    except Exception as e:
+        print(f"Erro com {endereco}: {e}")
+    finally:
+        print(f"Conexão de {nome_usuario} ({endereco}) encerrada.")
+        if conexao in clientes:
+            clientes.remove(conexao)
+        conexao.close()
 
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-servidor.bind(('localhost', 12345))
+
+servidor.bind(('0.0.0.0', 12345))
 servidor.listen(5)
-print("servidor aguardando conexões na porta 12345...")
+print("Servidor aguardando conexões na porta 12345...")
 
 while True:
     conexao, endereco = servidor.accept()

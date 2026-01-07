@@ -7,6 +7,7 @@ porta = 17017
 nome_usuario = input("Digite seu nome: ")
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cliente.connect((IP_Servidor, porta))
+cliente.send(nome_usuario.encode())
 
 def enviar_mensagens():
     while True:
