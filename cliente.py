@@ -1,8 +1,8 @@
 import socket
 import threading
 
-IP_Servidor = '0.tcp.sa.ngrok.io'
-porta = 17017
+IP_Servidor = 'localhost'
+porta = 12345
 
 nome_usuario = input("Digite seu nome: ")
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
